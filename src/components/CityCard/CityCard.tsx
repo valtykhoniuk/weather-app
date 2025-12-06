@@ -30,7 +30,6 @@ export function CityCard({ city, onRemove }: Props) {
 
   useEffect(() => {
     loadWeather();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city.lat, city.lon]);
 
   function handleRefresh(e: React.MouseEvent) {
@@ -58,11 +57,11 @@ export function CityCard({ city, onRemove }: Props) {
       <div className={styles.card}>
         <div className={styles.header}>
           <h3 className={styles.cityName}>{city.name}</h3>
-          <button className={styles.removeBtn} onClick={handleRemove}>
+          <button className={styles.removeBtn} onClick={handleRemove} aria-label="Remove city">
             ✕
           </button>
         </div>
-        <p className={styles.error}>Loading error</p>
+        <p className={styles.error}>Failed to load weather</p>
         <button className={styles.refreshBtn} onClick={handleRefresh}>
           Try again
         </button>
@@ -77,7 +76,7 @@ export function CityCard({ city, onRemove }: Props) {
           <h3 className={styles.cityName}>{city.name}</h3>
           <span className={styles.country}>{city.country}</span>
         </div>
-        <button className={styles.removeBtn} onClick={handleRemove}>
+        <button className={styles.removeBtn} onClick={handleRemove} aria-label="Remove city">
           ✕
         </button>
       </div>

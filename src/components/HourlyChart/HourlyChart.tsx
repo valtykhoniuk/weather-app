@@ -53,7 +53,7 @@ export function HourlyChart({ data }: Props) {
       <h3 className={styles.title}>24-hour forecast</h3>
 
       <div className={styles.chartWrapper}>
-        <svg width={width} height={height} className={styles.chart}>
+        <svg data-testid="hourly-graph" width={width} height={height} className={styles.chart}>
           <path
             d={pathD}
             fill="none"
