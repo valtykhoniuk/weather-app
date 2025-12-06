@@ -1,4 +1,4 @@
-const API_KEY = process.env.VITE_OPENWEATHERMAP_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_KEY;
 const BASE_URL = "https://api.openweathermap.org";
 
 export async function getCurrentWeather(lat: number, lon: number) {
