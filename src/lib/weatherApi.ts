@@ -24,3 +24,19 @@ export async function searchCities(cityName: string) {
   }
   return await response.json();
 }
+
+export async function getHourlyForecast(lat: number, lon: number) {
+  const url = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+
+  const response = await fetch(url);
+  if (!response.ok) return [];
+
+  const data = await response.json();
+
+  return data.list.slice(0, 8).map((item: any) => ({
+    dt: item.dt,
+    temp: item.main.temp,
+    icon: item.weather[0]?.icon,
+    description: item.weather[0]?.description,
+  }));
+}

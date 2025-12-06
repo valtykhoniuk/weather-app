@@ -1,0 +1,137 @@
+.card {
+  display: block;
+  background-color: var(--color-card);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  text-decoration: none;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--color-card-hover);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.cityName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.country {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.removeBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+
+  &:hover {
+    background-color: var(--color-danger);
+    color: white;
+  }
+}
+
+.weatherMain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+}
+
+.temp {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.description {
+  color: var(--color-text-secondary);
+  text-transform: capitalize;
+  margin-bottom: 16px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 16px;
+}
+
+.detailItem {
+  text-align: center;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.value {
+  font-weight: 600;
+}
+
+.refreshBtn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border-radius: 8px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: var(--color-accent-hover);
+  }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  color: var(--color-danger);
+  text-align: center;
+  padding: 20px;
+}
