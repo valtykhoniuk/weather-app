@@ -12,6 +12,9 @@ export async function getCurrentWeather(lat: number, lon: number) {
     temp: data.main.temp,
     feels_like: data.main.feels_like,
     humidity: data.main.humidity,
+    pressure: data.main.pressure,
+    wind_speed: data.wind?.speed || 0,
+    visibility: data.visibility || 0,
     weather: data.weather,
   };
 }
