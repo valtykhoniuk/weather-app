@@ -1,16 +1,10 @@
 "use client";
 
+import { HourlyForecastItem } from "@/types";
 import styles from "./HourlyChart.module.scss";
 
-interface HourlyData {
-  dt: number;
-  temp: number;
-  icon: string;
-  description: string;
-}
-
 interface Props {
-  data: HourlyData[];
+  data: HourlyForecastItem[];
 }
 
 function formatTime(timestamp: number): string {
@@ -53,7 +47,12 @@ export function HourlyChart({ data }: Props) {
       <h3 className={styles.title}>24-hour forecast</h3>
 
       <div className={styles.chartWrapper}>
-        <svg data-testid="hourly-graph" width={width} height={height} className={styles.chart}>
+        <svg
+          data-testid="hourly-graph"
+          width={width}
+          height={height}
+          className={styles.chart}
+        >
           <path
             d={pathD}
             fill="none"

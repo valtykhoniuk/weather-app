@@ -1,91 +1,102 @@
 "use client";
 
 import { useState } from "react";
-import { searchCities } from "@/lib/weatherApi";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useGetCities } from "@/hooks/useGetCities";
+import { GeocodingResult, City } from "@/types";
 import styles from "./AddCityForm.module.scss";
-
-interface City {
-  id: string;
-  name: string;
-  country: string;
-  lat: number;
-  lon: number;
-}
 
 interface Props {
   onAddCity: (city: City) => void;
   cityExists: (lat: number, lon: number) => boolean;
 }
 
+interface FormValues {
+  query: string;
+}
+
+function validateQuery(value: string): string | undefined {
+  if (!value || !value.trim()) {
+    return "Enter city name";
+  }
+  if (value.trim().length < 2) {
+    return "City name must be at least 2 characters";
+  }
+  return undefined;
+}
+
 export function AddCityForm({ onAddCity, cityExists }: Props) {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [searching, setSearching] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    data: results,
+    loading: searching,
+    error: searchError,
+    search,
+    reset,
+  } = useGetCities();
+  const [selectionError, setSelectionError] = useState<string>("");
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-
-    if (!query.trim()) {
-      setError("Enter city name");
-      return;
-    }
-
-    setSearching(true);
-    try {
-      const data = await searchCities(query);
-      if (data.length === 0) {
-        setError("City not found. Try another name.");
-      }
-      setResults(data);
-    } catch {
-      setError("Search failed. Try again.");
-    }
-    setSearching(false);
+  async function handleSubmit(values: FormValues) {
+    setSelectionError("");
+    reset();
+    await search(values.query);
   }
 
-  function handleSelect(result: any) {
+  function handleSelect(result: GeocodingResult) {
     if (cityExists(result.lat, result.lon)) {
-      setError("This city is already in your list");
+      setSelectionError("This city is already in your list");
       return;
     }
 
     onAddCity({
-      id: `${result.lat}-${result.lon}`,
+      id: Math.round(result.lat * 1000 + result.lon * 1000),
       name: result.name,
       country: result.country,
       lat: result.lat,
       lon: result.lon,
     });
 
-    setResults([]);
-    setQuery("");
-    setError("");
+    reset();
+    setSelectionError("");
   }
+
+  const displayError = selectionError || searchError;
 
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSearch}>
-        <input
-          data-testid="city-search-input"
-          className={styles.input}
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter city name..."
-        />
-        <button
-          data-testid="city-search-button"
-          className={styles.button}
-          type="submit"
-          disabled={searching}
-        >
-          {searching ? "..." : "Search"}
-        </button>
-      </form>
+      <Formik
+        initialValues={{ query: "" }}
+        onSubmit={handleSubmit}
+        validateOnChange={false}
+        validateOnBlur={false}
+      >
+        {({ isSubmitting }) => (
+          <Form className={styles.form}>
+            <Field
+              name="query"
+              validate={validateQuery}
+              data-testid="city-search-input"
+              className={styles.input}
+              type="text"
+              placeholder="Enter city name..."
+            />
+            <ErrorMessage
+              name="query"
+              component="div"
+              className={styles.error}
+            />
+            <button
+              data-testid="city-search-button"
+              className={styles.button}
+              type="submit"
+              disabled={isSubmitting || searching}
+            >
+              {searching ? "..." : "Search"}
+            </button>
+          </Form>
+        )}
+      </Formik>
 
-      {error && <p className={styles.error}>{error}</p>}
+      {displayError && <p className={styles.error}>{displayError}</p>}
 
       {results.length > 0 && (
         <ul className={styles.results}>
@@ -107,4 +118,3 @@ export function AddCityForm({ onAddCity, cityExists }: Props) {
     </div>
   );
 }
-

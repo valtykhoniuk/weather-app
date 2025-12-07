@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { City } from "@/types";
-import { getCurrentWeather } from "@/lib/weatherApi";
+import { useGetWeather } from "@/hooks/useGetWeather";
+import { Loader } from "@/components/Loader";
+import { AppError } from "@/components/AppError";
 import styles from "./CityCard.module.scss";
 
 interface Props {
@@ -12,29 +13,16 @@ interface Props {
 }
 
 export function CityCard({ city, onRemove }: Props) {
-  const [weather, setWeather] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  async function loadWeather() {
-    setLoading(true);
-    setError(false);
-    const data = await getCurrentWeather(city.lat, city.lon);
-    if (data) {
-      setWeather(data);
-    } else {
-      setError(true);
-    }
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    loadWeather();
-  }, [city.lat, city.lon]);
+  const {
+    data: weather,
+    loading,
+    error,
+    refetch,
+  } = useGetWeather(city.lat, city.lon, true);
 
   function handleRefresh(e: React.MouseEvent) {
     e.preventDefault();
-    loadWeather();
+    refetch();
   }
 
   function handleRemove(e: React.MouseEvent) {
@@ -45,9 +33,7 @@ export function CityCard({ city, onRemove }: Props) {
   if (loading) {
     return (
       <div className={styles.card}>
-        <div className={styles.loader}>
-          <div className={styles.spinner}></div>
-        </div>
+        <Loader size="small" message="" />
       </div>
     );
   }
@@ -57,14 +43,19 @@ export function CityCard({ city, onRemove }: Props) {
       <div className={styles.card}>
         <div className={styles.header}>
           <h3 className={styles.cityName}>{city.name}</h3>
-          <button className={styles.removeBtn} onClick={handleRemove} aria-label="Remove city">
+          <button
+            className={styles.removeBtn}
+            onClick={handleRemove}
+            aria-label="Remove city"
+          >
             ✕
           </button>
         </div>
-        <p className={styles.error}>Failed to load weather</p>
-        <button className={styles.refreshBtn} onClick={handleRefresh}>
-          Try again
-        </button>
+        <AppError
+          message={error}
+          onRetry={() => refetch()}
+          retryLabel="Try again"
+        />
       </div>
     );
   }
@@ -76,7 +67,11 @@ export function CityCard({ city, onRemove }: Props) {
           <h3 className={styles.cityName}>{city.name}</h3>
           <span className={styles.country}>{city.country}</span>
         </div>
-        <button className={styles.removeBtn} onClick={handleRemove} aria-label="Remove city">
+        <button
+          className={styles.removeBtn}
+          onClick={handleRemove}
+          aria-label="Remove city"
+        >
           ✕
         </button>
       </div>

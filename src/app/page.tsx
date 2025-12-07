@@ -1,44 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useCitiesStore } from "@/store/useCitiesStore";
+import { useCitiesFromLocalStorage } from "@/hooks/useCitiesFromLocalStorage";
 import { CityCard } from "@/components/CityCard/CityCard";
-import { searchCities } from "@/lib/weatherApi";
+import { AddCityForm } from "@/components/AddCityForm/AddCityForm";
+import { City } from "@/types";
 import styles from "./page.module.scss";
 
 export default function Home() {
-  const { cities, addCity, removeCity } = useCitiesStore();
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [searching, setSearching] = useState(false);
+  const { cities, setCities } = useCitiesFromLocalStorage();
 
-  useEffect(() => {
-    const saved = localStorage.getItem("cities");
-    if (saved) {
-      useCitiesStore.setState({ cities: JSON.parse(saved) });
-    }
-  }, []);
-
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!query.trim()) return;
-
-    setSearching(true);
-    const data = await searchCities(query);
-    setResults(data);
-    setSearching(false);
+  function handleAddCity(city: City) {
+    setCities([...cities, city]);
   }
 
-  function handleAdd(result: any) {
-    addCity({
-      id: result.lat + result.lon,
-      name: result.name,
-      country: result.country,
-      lat: result.lat,
-      lon: result.lon,
-    });
-    setResults([]);
-    setQuery("");
+  function handleRemoveCity(id: number) {
+    setCities(cities.filter((c) => c.id !== id));
+  }
+
+  function cityExists(lat: number, lon: number): boolean {
+    return cities.some((c) => c.lat === lat && c.lon === lon);
   }
 
   return (
@@ -49,35 +29,7 @@ export default function Home() {
       </header>
 
       <section className={styles.searchSection}>
-        <form className={styles.form} onSubmit={handleSearch}>
-          <input
-            className={styles.input}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter city name..."
-          />
-          <button className={styles.button} disabled={searching}>
-            {searching ? "..." : "🔍 Search"}
-          </button>
-        </form>
-
-        {results.length > 0 && (
-          <ul className={styles.results}>
-            {results.map((r, i) => (
-              <li
-                key={i}
-                className={styles.resultItem}
-                onClick={() => handleAdd(r)}
-              >
-                <span className={styles.resultName}>{r.name}</span>
-                <span className={styles.resultMeta}>
-                  {r.state && `${r.state}, `}
-                  {r.country}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AddCityForm onAddCity={handleAddCity} cityExists={cityExists} />
       </section>
 
       {cities.length === 0 ? (
@@ -90,7 +42,7 @@ export default function Home() {
       ) : (
         <div className={styles.citiesGrid}>
           {cities.map((city) => (
-            <CityCard key={city.id} city={city} onRemove={removeCity} />
+            <CityCard key={city.id} city={city} onRemove={handleRemoveCity} />
           ))}
         </div>
       )}
