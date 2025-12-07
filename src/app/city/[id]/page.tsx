@@ -142,7 +142,7 @@ export default function CityPage() {
             </>
           )}
 
-          {hourly.length > 0 && (
+          {!!hourly.length && (
             <div className={styles.forecastCard}>
               <HourlyChart data={hourly} />
             </div>
