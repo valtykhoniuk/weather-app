@@ -18,7 +18,7 @@ export function AppError({
       <div className={styles.icon}>⚠️</div>
       <p className={styles.message}>{message}</p>
       {onRetry && (
-        <button className={styles.retryButton} onClick={onRetry}>
+        <button type="button" className={styles.retryButton} onClick={onRetry}>
           {retryLabel}
         </button>
       )}

@@ -20,13 +20,11 @@ export function CityCard({ city, onRemove }: Props) {
     refetch,
   } = useGetWeather(city.lat, city.lon, true);
 
-  function handleRefresh(e: React.MouseEvent) {
-    e.preventDefault();
+  function handleRefresh() {
     refetch();
   }
 
-  function handleRemove(e: React.MouseEvent) {
-    e.preventDefault();
+  function handleRemove() {
     onRemove(city.id);
   }
 
@@ -44,6 +42,7 @@ export function CityCard({ city, onRemove }: Props) {
         <div className={styles.header}>
           <h3 className={styles.cityName}>{city.name}</h3>
           <button
+            type="button"
             className={styles.removeBtn}
             onClick={handleRemove}
             aria-label="Remove city"
@@ -68,6 +67,7 @@ export function CityCard({ city, onRemove }: Props) {
           <span className={styles.country}>{city.country}</span>
         </div>
         <button
+          type="button"
           className={styles.removeBtn}
           onClick={handleRemove}
           aria-label="Remove city"
@@ -112,7 +112,11 @@ export function CityCard({ city, onRemove }: Props) {
         </>
       )}
 
-      <button className={styles.refreshBtn} onClick={handleRefresh}>
+      <button
+        type="button"
+        className={styles.refreshBtn}
+        onClick={handleRefresh}
+      >
         Refresh
       </button>
     </Link>

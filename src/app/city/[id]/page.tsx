@@ -108,7 +108,11 @@ export default function CityPage() {
                 <p className={styles.feelsLike}>
                   Feels like {Math.round(weather.feels_like)}°C
                 </p>
-                <button className={styles.refreshBtn} onClick={handleRefresh}>
+                <button
+                  type="button"
+                  className={styles.refreshBtn}
+                  onClick={handleRefresh}
+                >
                   🔄 Refresh
                 </button>
               </div>
